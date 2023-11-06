@@ -1,7 +1,7 @@
 <html lang="en">
 <head>
     <script>
-          function LoadSimilarMapping() {
+        function LoadSimilarMapping() {
             let queryString = window.location.search
             const urlParams = new URLSearchParams(queryString)
 
@@ -13,30 +13,28 @@
                 try {
                     console.log(uuid)
                     console.log(regexExp.test(uuid))
-
                     if (regexExp.test(uuid)) {
                         lookupUUID(uuid)
                     }
                 } catch (error) {
                     redirect(uuid)
                 }
-            }else{
+            } else {
                 redirect("error")
             }
 
         }
 
-        async function lookupUUID(uuid){
+        function lookupUUID(uuid) {
             let prefix = uuid.slice(0, 2)
 
-            const response = await fetch("https://cdn.jsdelivr.net/gh/CarlosEsco/data@update/similar/" + prefix + ".html")
-            if (!response.ok) {
-                console.log("response not okay")
-                redirect(uuid)
-            }
+            let xmlhttp = new XMLHttpRequest();
+            xmlhttp.open("GET", "https://cdn.jsdelivr.net/gh/CarlosEsco/data@update/similar/" + prefix + ".html", false);
+            xmlhttp.send();
 
-            response.text().then(function(body){
-                let data = body.split("\n")
+            let data = xmlhttp.responseText.split("\n")
+
+
             let matchingLine = data.find((line) => line.startsWith(uuid))
 
             if (matchingLine != null && matchingLine.length > 0) {
@@ -50,7 +48,7 @@
                 console.log("No matching UUID")
                 redirect(uuid)
             }
-            })
+
         }
 
         function redirect(error) {
