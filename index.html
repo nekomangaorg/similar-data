@@ -6,40 +6,42 @@
             console.log(queryString)
             const urlParams = new URLSearchParams(queryString)
 
-            let error = false
+            const regexExp = /^user\/[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}(?:\/.*)?$/i;
+
+
+            let error = true
 
             if(urlParams.has("uuid")){
                 try {
                     let uuid = urlParams.get("uuid")
                     console.log(uuid)
-                    let prefix = uuid.slice(0,2)
-                    console.log(prefix)
 
-                    let xmlhttp = new XMLHttpRequest();
-                    xmlhttp.open("GET", "https://cdn.jsdelivr.net/gh/CarlosEsco/data@update/similar/" + prefix + ".csv", false);
-                    xmlhttp.send();
+                    if(regexExp.test(uuid)) {
 
-                    let data = xmlhttp.responseText.split("\n")
+                        let prefix = uuid.slice(0, 2)
+                        console.log(prefix)
 
-                    let matchingLine = data.find((line) => line.startsWith(uuid))
+                        let xmlhttp = new XMLHttpRequest();
+                        xmlhttp.open("GET", "https://cdn.jsdelivr.net/gh/CarlosEsco/data@update/similar/" + prefix + ".csv", false);
+                        xmlhttp.send();
 
-                    if (matchingLine != null && matchingLine.length > 0) {
-                        let escapedJson = matchingLine.split(":::||@!@||:::")[1]
-                        let obj = JSON.parse(escapedJson);
-                        document.body.innerHTML = "";
-                        document.body.appendChild(document.createTextNode(JSON.stringify(obj, null, 4)));
-                    } else {
-                        error = true
-                        location.href = 'error';
+                        let data = xmlhttp.responseText.split("\n")
+
+                        let matchingLine = data.find((line) => line.startsWith(uuid))
+
+                        if (matchingLine != null && matchingLine.length > 0) {
+                            let escapedJson = matchingLine.split(":::||@!@||:::")[1]
+                            let obj = JSON.parse(escapedJson);
+                            document.body.innerHTML = "";
+                            document.body.appendChild(document.createTextNode(JSON.stringify(obj, null, 4)));
+                            error = false
+                        }
                     }
                 }
                 catch(error){
                   console.error(error)
-                        error = true
                 }
 
-            }else{
-                error = true
             }
 
             if(error){
