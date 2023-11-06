@@ -7,7 +7,7 @@
 
             const regexExp = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
 
-            let error = true
+            let error = false
 
             let errorParam = "error"
 
@@ -22,32 +22,40 @@
 
                     if(regexExp.test(uuid)) {
 
+
                         let prefix = uuid.slice(0, 2)
 
-                        let xmlhttp = new XMLHttpRequest();
-                        xmlhttp.open("GET", "https://cdn.jsdelivr.net/gh/CarlosEsco/data@update/similar/" + prefix + ".csv", false);
-                        xmlhttp.send();
 
-                        let data = xmlhttp.responseText.split("\n")
+                        let promise = getCsv(prefix)
 
-                        let matchingLine = data.find((line) => line.startsWith(uuid))
+                        promise.then(
+                            function () {
+                                let data = xmlhttp.responseText.split("\n")
+                                let matchingLine = data.find((line) => line.startsWith(uuid))
 
+                                if (matchingLine != null && matchingLine.length > 0) {
+                                    let escapedJson = matchingLine.split(":::||@!@||:::")[1]
+                                    let obj = JSON.parse(escapedJson);
+                                    document.body.innerHTML = "";
+                                    let pre = document.createElement("pre")
+                                    pre.appendChild(document.createTextNode(JSON.stringify(obj, null, '\t')))
+                                    document.body.appendChild(pre);
+                                }
+                                else{
+                                    console.log("No matching UUID")
+                                    error = true
+                                }
+                            },
+                            function (error) {
+                                error = true
+                            }
+                        )
 
-                        if (matchingLine != null && matchingLine.length > 0) {
-                            let escapedJson = matchingLine.split(":::||@!@||:::")[1]
-                            let obj = JSON.parse(escapedJson);
-                            document.body.innerHTML = "";
-                            let pre = document.createElement("pre")
-                            pre.appendChild(document.createTextNode(JSON.stringify(obj, null, '\t')))
-                            document.body.appendChild(pre);
-                        }
-                        else{
-                            console.log("No matching UUID")
-                        }
                     }
                 }
                 catch(error){
                   console.error(error)
+                    error = true
                 }
 
             }
@@ -55,8 +63,16 @@
             if(error){
                 location.href = errorParam;
             }
-
         }
+
+        async function getCsv(prefix) {
+            const response = await fetch("https://cdn.jsdelivr.net/gh/CarlosEsco/data@update/similar/" + prefix + ".csv")
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text()
+        }
+
     </script>
 </head>
 
