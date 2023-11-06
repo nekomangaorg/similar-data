@@ -34,9 +34,9 @@
                 console.log("response not okay")
                 redirect(uuid)
             }
-            const body = await response.text()
-            let data = body.split("\n")
 
+            response.text().then(function(body){
+                let data = body.split("\n")
             let matchingLine = data.find((line) => line.startsWith(uuid))
 
             if (matchingLine != null && matchingLine.length > 0) {
@@ -50,6 +50,7 @@
                 console.log("No matching UUID")
                 redirect(uuid)
             }
+            })
         }
 
         function redirect(error) {
