@@ -3,22 +3,24 @@
     <script>
         function LoadSimilarMapping() {
             let queryString = window.location.search
-            console.log(queryString)
             const urlParams = new URLSearchParams(queryString)
 
             const regexExp = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
 
             let error = true
 
+            let errorParam = "error"
+
             if(urlParams.has("uuid")){
+
                 try {
                     let uuid = urlParams.get("uuid")
-                    console.log(uuid)
+
+                    errorParam = uuid
 
                     if(regexExp.test(uuid)) {
 
                         let prefix = uuid.slice(0, 2)
-                        console.log(prefix)
 
                         let xmlhttp = new XMLHttpRequest();
                         xmlhttp.open("GET", "https://cdn.jsdelivr.net/gh/CarlosEsco/data@update/similar/" + prefix + ".csv", false);
@@ -37,6 +39,9 @@
                             pre.appendChild(document.createTextNode(JSON.stringify(obj, null, '\t')))
                             document.body.appendChild(pre);
                         }
+                        else{
+                            console.log("No matching UUID")
+                        }
                     }
                 }
                 catch(error){
@@ -46,7 +51,7 @@
             }
 
             if(error){
-                location.href = 'error';
+                location.href = errorParam;
             }
 
         }
