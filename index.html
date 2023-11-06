@@ -1,4 +1,4 @@
-<html>
+<html lang="en">
 <head>
     <script>
           function LoadSimilarMapping() {
@@ -34,8 +34,8 @@
                 console.log("response not okay")
                 redirect(uuid)
             }
-
-            let data = response.text().split("\n")
+            const body = await response.text()
+            let data = body.split("\n")
 
             let matchingLine = data.find((line) => line.startsWith(uuid))
 
@@ -58,6 +58,7 @@
 
 
     </script>
+    <title>MangaDex Similar</title>
 </head>
 
 <body onload="LoadSimilarMapping()"></body>
