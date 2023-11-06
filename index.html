@@ -15,7 +15,7 @@
                 console.log(prefix)
 
                 let xmlhttp=new XMLHttpRequest();
-                xmlhttp.open("GET", "https://github.com/CarlosEsco/data/blob/update/similar/"+prefix+".csv", false);
+                xmlhttp.open("GET", "https://cdn.jsdelivr.net/gh/CarlosEsco/data@update/similar/"+prefix+".csv", false);
                 xmlhttp.send();
 
                 let data = xmlhttp.responseText.split("\n")
