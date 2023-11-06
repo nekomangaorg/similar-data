@@ -3,6 +3,7 @@
     <script>
         function LoadSimilarMapping() {
             let queryString = window.location.search
+            console.log(queryString)
             const urlParams = new URLSearchParams(queryString)
 
             const regexExp = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
@@ -12,8 +13,10 @@
                 let uuid = urlParams.get("uuid")
                 try {
                     console.log(uuid)
-                    console.log(regexExp.test(uuid))
-                    if (regexExp.test(uuid)) {
+                    const uuidValid = regexExp.test(uuid)
+                    console.log(uuidValid)
+                    if (uuidValid) {
+                        console.log("regex successful")
                         lookupUUID(uuid)
                     }
                 } catch (error) {
@@ -26,14 +29,16 @@
         }
 
         function lookupUUID(uuid) {
+            console.log("looking up for uuid: " + uuid)
             let prefix = uuid.slice(0, 2)
 
             let xmlhttp = new XMLHttpRequest();
-            xmlhttp.open("GET", "https://cdn.jsdelivr.net/gh/CarlosEsco/data@update/similar/" + prefix + ".html", false);
+            let url = "https://cdn.jsdelivr.net/gh/CarlosEsco/data@update/similar/" + prefix + ".html"
+            console.log("loading url:  " + url)
+            xmlhttp.open("GET", url, false);
             xmlhttp.send();
 
             let data = xmlhttp.responseText.split("\n")
-
 
             let matchingLine = data.find((line) => line.startsWith(uuid))
 
