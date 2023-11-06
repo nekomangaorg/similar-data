@@ -1,7 +1,7 @@
 <html>
 <head>
     <script>
-        function LoadSimilarMapping() {
+        async function LoadSimilarMapping() {
             let queryString = window.location.search
             const urlParams = new URLSearchParams(queryString)
 
@@ -11,7 +11,7 @@
 
             let errorParam = "error"
 
-            if(urlParams.has("uuid")){
+            if (urlParams.has("uuid")) {
 
                 try {
                     let uuid = urlParams.get("uuid")
@@ -20,58 +20,46 @@
                     console.log(uuid)
                     console.log(regexExp.test(uuid))
 
-                    if(regexExp.test(uuid)) {
+                    if (regexExp.test(uuid)) {
 
 
                         let prefix = uuid.slice(0, 2)
 
 
-                        let promise = getCsv(prefix)
+                        const response = await fetch("https://cdn.jsdelivr.net/gh/CarlosEsco/data@update/similar/" + prefix + ".csv")
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
 
-                        promise.then(
-                            function () {
-                                let data = xmlhttp.responseText.split("\n")
-                                let matchingLine = data.find((line) => line.startsWith(uuid))
+                        let data = (await response.text()).split("\n")
 
-                                if (matchingLine != null && matchingLine.length > 0) {
-                                    let escapedJson = matchingLine.split(":::||@!@||:::")[1]
-                                    let obj = JSON.parse(escapedJson);
-                                    document.body.innerHTML = "";
-                                    let pre = document.createElement("pre")
-                                    pre.appendChild(document.createTextNode(JSON.stringify(obj, null, '\t')))
-                                    document.body.appendChild(pre);
-                                }
-                                else{
-                                    console.log("No matching UUID")
-                                    error = true
-                                }
-                            },
-                            function (error) {
-                                error = true
-                            }
-                        )
+                        let matchingLine = data.find((line) => line.startsWith(uuid))
+
+                        if (matchingLine != null && matchingLine.length > 0) {
+                            let escapedJson = matchingLine.split(":::||@!@||:::")[1]
+                            let obj = JSON.parse(escapedJson);
+                            document.body.innerHTML = "";
+                            let pre = document.createElement("pre")
+                            pre.appendChild(document.createTextNode(JSON.stringify(obj, null, '\t')))
+                            document.body.appendChild(pre);
+                        } else {
+                            console.log("No matching UUID")
+                            error = true
+                        }
 
                     }
-                }
-                catch(error){
-                  console.error(error)
+                } catch (error) {
+                    console.error(error)
                     error = true
                 }
 
             }
 
-            if(error){
+            if (error) {
                 location.href = errorParam;
             }
         }
 
-        async function getCsv(prefix) {
-            const response = await fetch("https://cdn.jsdelivr.net/gh/CarlosEsco/data@update/similar/" + prefix + ".csv")
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.text()
-        }
 
     </script>
 </head>
