@@ -9,28 +9,35 @@
             let error = false
 
             if(urlParams.has("uuid")){
-                let uuid = urlParams.get("uuid")
-                console.log(uuid)
-                let prefix = uuid.slice(0,2)
-                console.log(prefix)
+                try {
+                    let uuid = urlParams.get("uuid")
+                    console.log(uuid)
+                    let prefix = uuid.slice(0,2)
+                    console.log(prefix)
 
-                let xmlhttp=new XMLHttpRequest();
-                xmlhttp.open("GET", "https://cdn.jsdelivr.net/gh/CarlosEsco/data@update/similar/"+prefix+".csv", false);
-                xmlhttp.send();
+                    let xmlhttp = new XMLHttpRequest();
+                    xmlhttp.open("GET", "https://cdn.jsdelivr.net/gh/CarlosEsco/data@update/similar/" + prefix + ".csv", false);
+                    xmlhttp.send();
 
-                let data = xmlhttp.responseText.split("\n")
+                    let data = xmlhttp.responseText.split("\n")
 
-                let matchingLine = data.find((line) => line.startsWith(uuid))
+                    let matchingLine = data.find((line) => line.startsWith(uuid))
 
-                if (matchingLine != null && matchingLine.length > 0) {
-                    let escapedJson = matchingLine.split(":::||@!@||:::")[1]
-                    let obj = JSON.parse(escapedJson);
-                    document.body.innerHTML = "";
-                    document.body.appendChild(document.createTextNode(JSON.stringify(obj, null, 4)));
-                }else{
-                    error = true
-                    location.href = 'error';
+                    if (matchingLine != null && matchingLine.length > 0) {
+                        let escapedJson = matchingLine.split(":::||@!@||:::")[1]
+                        let obj = JSON.parse(escapedJson);
+                        document.body.innerHTML = "";
+                        document.body.appendChild(document.createTextNode(JSON.stringify(obj, null, 4)));
+                    } else {
+                        error = true
+                        location.href = 'error';
+                    }
                 }
+                catch(error){
+                  console.error(error)
+                        error = true
+                }
+
             }else{
                 error = true
             }
