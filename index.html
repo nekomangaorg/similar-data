@@ -30,10 +30,11 @@
 
         function lookupUUID(uuid) {
             console.log("looking up for uuid: " + uuid)
+            let filePrefix = uuid.slice(0, 2)
             let prefix = uuid.slice(0, 3)
 
             let xmlhttp = new XMLHttpRequest();
-            let url = "https://cdn.jsdelivr.net/gh/CarlosEsco/data@update/similar/" + prefix + ".html"
+            let url = "https://cdn.jsdelivr.net/gh/CarlosEsco/data@update/similar/" + filePrefix + "/" + prefix + ".html"
             console.log("loading url:  " + url)
             xmlhttp.open("GET", url, false);
             xmlhttp.send();
