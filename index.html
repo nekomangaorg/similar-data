@@ -30,7 +30,7 @@
 
         function lookupUUID(uuid) {
             console.log("looking up for uuid: " + uuid)
-            let prefix = uuid.slice(0, 2)
+            let prefix = uuid.slice(0, 3)
 
             let xmlhttp = new XMLHttpRequest();
             let url = "https://cdn.jsdelivr.net/gh/CarlosEsco/data@update/similar/" + prefix + ".html"
