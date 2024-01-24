@@ -1,4 +1,4 @@
-# Similar Manga API
+# Similar Manga Data
 
 This hosts the generated similar output of [Neko Similar Processor](https://github.com/nekomangaorg/similar-processor), and the index.html for the github pages.
 
